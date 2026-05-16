@@ -476,6 +476,37 @@ async function loadWorkspaces() {
   
   list.innerHTML = '';
   list.appendChild(frag);
+  list.appendChild(frag);
+}
+
+// ===== LOCAL AI FALLBACK =====
+async function localSemanticSearchFallback(query, tabs) {
+  const aiApi = window.ai?.languageModel || window.ai;
+  if (!aiApi || !aiApi.create) {
+    throw new Error('Chrome built-in AI not available. Please enable chrome://flags/#prompt-api-for-extension');
+  }
+  
+  const capabilities = await aiApi.capabilities();
+  if (capabilities.available === 'no') {
+    throw new Error('AI model not downloaded yet. Check chrome://components.');
+  }
+
+  const session = await aiApi.create();
+  
+  // Format tabs into a concise list to save context window
+  const tabListText = tabs.map(t => `[ID: ${t.id}] ${t.title}`).join('\n');
+  
+  const prompt = `You are a Semantic Search engine. The user is searching for: "${query}".
+Here are the open tabs:
+${tabListText}
+
+Return ONLY a comma-separated list of the matching IDs. No text, no explanation. If none match, return 'none'.`;
+
+  const result = await session.prompt(prompt);
+  const idsText = result.replace(/`/g, '').trim();
+  if (idsText.toLowerCase().includes('none') || !idsText) return [];
+  
+  return idsText.split(',').map(id => parseInt(id.match(/\d+/)?.[0])).filter(id => !isNaN(id));
 }
 
 // ===== EVENT LISTENERS =====
@@ -492,15 +523,29 @@ function setupEventListeners() {
         const semanticQuery = query.substring(1).trim();
         document.getElementById('searchCount').textContent = 'AI Searching... ✨';
         
-        const aiResult = await sendMsg({ action: 'semanticSearch', query: semanticQuery });
+        let aiResult = await sendMsg({ action: 'semanticSearch', query: semanticQuery });
+        let matchingIds = [];
+
         if (aiResult.success) {
-           const aiTabs = allTabs.filter(t => aiResult.ids.includes(t.id));
+           matchingIds = aiResult.ids;
+        } else if (aiResult.error === 'No API Key') {
+           document.getElementById('searchCount').textContent = 'Using Free Built-in AI... 🧠';
+           try {
+             matchingIds = await localSemanticSearchFallback(semanticQuery, allTabs);
+             aiResult.success = true; // Mark as success for rendering
+           } catch(err) {
+             showToast(err.message, 'error');
+             document.getElementById('searchCount').textContent = 'AI Error';
+             return;
+           }
+        }
+
+        if (aiResult.success) {
+           const aiTabs = allTabs.filter(t => matchingIds.includes(t.id));
            renderTabs(aiTabs);
            document.getElementById('searchCount').textContent = `${aiTabs.length} semantic matches ✨`;
         } else {
-           if (aiResult.error === 'No API Key') {
-             showToast('Add your Gemini Key in Settings for AI Search!', 'error');
-           }
+           showToast('AI Error: ' + aiResult.error, 'error');
            document.getElementById('searchCount').textContent = 'AI Error';
         }
       }
