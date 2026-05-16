@@ -192,8 +192,16 @@ async function handleTabAction(action, tab) {
       await loadStats();
       break;
     case 'suspend':
-      await sendMsg({ action: 'suspendTab', tabId: tab.id });
-      showToast('Tab suspended', 'success');
+      if (tab.active) {
+        showToast('Cannot suspend the active tab! ❌', 'error');
+        return;
+      }
+      const result = await sendMsg({ action: 'suspendTab', tabId: tab.id });
+      if (result && result.success) {
+        showToast('Tab suspended', 'success');
+      } else {
+        showToast('Chrome blocked suspending this tab', 'error');
+      }
       await loadTabs();
       await loadStats();
       break;
