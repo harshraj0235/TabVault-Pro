@@ -9,6 +9,7 @@ const search = new TabSearchEngine();
 let allTabs = [];
 let currentPanel = 'tabs';
 let duplicateTabIds = new Set();
+let isGridView = false;
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', async () => {
@@ -535,6 +536,12 @@ function setupEventListeners() {
   });
 
   // Header actions
+  document.getElementById('btnGridView').addEventListener('click', () => {
+    isGridView = !isGridView;
+    document.getElementById('tabList').classList.toggle('grid-view', isGridView);
+    renderTabs(allTabs);
+  });
+
   document.getElementById('btnSuspendAll').addEventListener('click', async () => {
     const result = await sendMsg({ action: 'suspendAll' });
     showToast(`Suspended ${result.suspended} tabs`, 'success');
