@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TabVault Pro — Crash-Proof Tab Manager",
   "version": "1.0.0",
-  "description": "The tab manager that just works. Crash-proof sessions, instant fuzzy search, smart suspension, and beautiful workspaces. Never lose a tab again.",
+  "description": "High-performance tab manager with crash-proof sessions, smart suspension, AI search, and workspaces. Never lose a tab again.",
   "permissions": [
     "tabs",
     "tabGroups",
