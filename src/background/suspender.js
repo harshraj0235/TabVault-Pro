@@ -64,13 +64,14 @@ async function suspendTab(tabId) {
   try { await chrome.tabs.discard(tabId); return true; } catch (e) { return false; }
 }
 
-async function suspendAllInactive() {
+async function suspendAllInactive(force = false) {
   const settings = await getSuspenderSettings();
   const tabs = getAllTabs();
   let suspended = 0;
   for (const tab of tabs) {
     if (tab.discarded || tab.active) continue;
-    if (shouldSkipSuspension(tab, settings)) continue;
+    // If forced, we ignore all user rules (pinned, audible, etc.) and suspend everything Chrome allows.
+    if (!force && shouldSkipSuspension(tab, settings)) continue;
     try { await chrome.tabs.discard(tab.id); suspended++; } catch (e) { /* ignore */ }
   }
   return suspended;

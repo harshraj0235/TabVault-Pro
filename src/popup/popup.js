@@ -605,7 +605,7 @@ function setupEventListeners() {
   });
 
   document.getElementById('btnSuspendAll').addEventListener('click', async () => {
-    const result = await sendMsg({ action: 'suspendAll' });
+    const result = await sendMsg({ action: 'suspendAll', force: true });
     showToast(`Suspended ${result.suspended} tabs`, 'success');
     await loadTabs();
     await loadStats();

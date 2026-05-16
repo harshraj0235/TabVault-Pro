@@ -161,7 +161,7 @@ async function handleMessage(msg) {
     case 'suspendTab':
       return { success: await suspendTab(msg.tabId) };
     case 'suspendAll':
-      return { suspended: await suspendAllInactive() };
+      return { suspended: await suspendAllInactive(msg.force) };
     case 'closeDuplicates': {
       const dupes = findDuplicates();
       const idsToClose = [];
