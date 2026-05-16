@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "TabVault Pro — Crash-Proof Tab Manager",
+  "version": "1.0.0",
+  "description": "The tab manager that just works. Crash-proof sessions, instant fuzzy search, smart suspension, and beautiful workspaces. Never lose a tab again.",
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage",
+    "alarms",
+    "notifications",
+    "sidePanel"
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "side_panel": {
+    "default_path": "src/popup/popup.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Space",
+        "mac": "Command+Shift+Space"
+      },
+      "description": "Open TabVault Pro"
+    },
+    "save-session": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Quick save current session"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "minimum_chrome_version": "116"
+}

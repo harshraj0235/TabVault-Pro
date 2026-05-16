@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabVault Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Header -->
+    <header class="header" id="header">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-icon" id="logoIcon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="url(#logoGrad)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M12 8V16M8 10V14M16 10V14" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round"/>
+              <defs><linearGradient id="logoGrad" x1="3" y1="2" x2="21" y2="22"><stop stop-color="#818cf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+            </svg>
+          </div>
+          <h1 class="logo-text">TabVault<span class="pro-badge" id="proBadge" style="display:none;">PRO</span></h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" id="btnSuspendAll" title="Suspend inactive tabs">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64A9 9 0 0 1 20.77 15M6.16 6.16a9 9 0 0 0 1.61 14.12"/><circle cx="12" cy="12" r="1"/></svg>
+          </button>
+          <button class="icon-btn" id="btnCloseDupes" title="Close duplicate tabs">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="14" height="14" rx="2"/><rect x="2" y="8" width="14" height="14" rx="2"/></svg>
+          </button>
+          <button class="icon-btn" id="btnGridView" title="Toggle Visual Grid">🖼️</button>
+          <button class="icon-btn" id="btnGroupTabs" title="Auto-Group Tabs (Pro)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </button>
+          <button class="icon-btn" id="btnSettings" title="Settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Search -->
+      <div class="search-container" id="searchContainer">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search tabs... (Ctrl+F)" autocomplete="off" spellcheck="false">
+        <span class="search-count" id="searchCount"></span>
+        <button class="search-clear" id="searchClear" style="display:none;">&times;</button>
+      </div>
+      <!-- Stats Bar -->
+      <div class="stats-bar" id="statsBar">
+        <span class="stat" id="statTabs"><span class="stat-num">0</span> tabs</span>
+        <span class="stat-sep">·</span>
+        <span class="stat" id="statWindows"><span class="stat-num">0</span> windows</span>
+        <span class="stat-sep">·</span>
+        <span class="stat" id="statSaved"><span class="stat-num">0</span>MB saved</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" id="navTabs">
+      <button class="nav-tab active" data-panel="tabs">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        Tabs
+      </button>
+      <button class="nav-tab" data-panel="sessions">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Sessions
+      </button>
+      <button class="nav-tab" data-panel="workspaces">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="8" height="8" rx="1"/><rect x="14" y="7" width="8" height="8" rx="1"/><rect x="8" y="2" width="8" height="5" rx="1"/></svg>
+        Spaces
+      </button>
+    </nav>
+
+    <!-- Content Panels -->
+    <main class="content" id="content">
+      <!-- Tabs Panel -->
+      <div class="panel active" id="panelTabs">
+        <div class="tab-list" id="tabList"></div>
+        <div class="empty-state" id="emptyTabState" style="display:none;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          <p>No tabs found</p>
+        </div>
+      </div>
+
+      <!-- Sessions Panel -->
+      <div class="panel" id="panelSessions">
+        <div class="panel-actions">
+          <button class="btn btn-primary" id="btnSaveSession">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+            Save Current Session
+          </button>
+        </div>
+        <div class="session-list" id="sessionList"></div>
+        <div class="empty-state" id="emptySessionState" style="display:none;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <p>No saved sessions yet</p>
+          <span class="empty-hint">Click "Save Current Session" to get started</span>
+        </div>
+      </div>
+
+      <!-- Workspaces Panel -->
+      <div class="panel" id="panelWorkspaces">
+        <div class="panel-actions">
+          <button class="btn btn-primary" id="btnNewWorkspace">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Workspace
+          </button>
+        </div>
+        <div class="workspace-list" id="workspaceList"></div>
+      </div>
+    </main>
+
+    <!-- Settings Panel (overlay) -->
+    <div class="settings-overlay" id="settingsOverlay" style="display:none;">
+      <div class="settings-panel">
+        <div class="settings-header">
+          <h2>Settings</h2>
+          <button class="icon-btn" id="btnCloseSettings">&times;</button>
+        </div>
+        <div class="settings-body">
+          <div class="setting-group">
+            <h3>Tab Suspension</h3>
+            <label class="setting-row">
+              <span>Auto-suspend inactive tabs</span>
+              <input type="checkbox" id="settingSuspendEnabled" class="toggle">
+            </label>
+            <label class="setting-row">
+              <span>Suspend after (minutes)</span>
+              <input type="number" id="settingSuspendMinutes" class="setting-input" min="5" max="120" value="30">
+            </label>
+            <label class="setting-row">
+              <span>Never suspend pinned tabs</span>
+              <input type="checkbox" id="settingNeverPinned" class="toggle" checked>
+            </label>
+            <label class="setting-row">
+              <span>Never suspend audible tabs</span>
+              <input type="checkbox" id="settingNeverAudible" class="toggle" checked>
+            </label>
+          </div>
+          <div class="setting-group">
+            <h3>Domain Rules (Advanced)</h3>
+            <label class="setting-row" style="flex-direction:column; align-items:flex-start;">
+              <span>Never Suspend Domains (Whitelist)</span>
+              <input type="text" id="settingWhitelist" class="setting-input" placeholder="e.g. github.com, docs.google.com" style="width:100%; margin-top:6px; text-align:left;">
+              <span style="font-size:10px; color:var(--text-muted); margin-top:4px;">Comma separated domains</span>
+            </label>
+          </div>
+          <div class="setting-group">
+            <h3>AI Configuration (Free)</h3>
+            <label class="setting-row" style="flex-direction:column; align-items:flex-start;">
+              <span>Gemini API Key</span>
+              <input type="password" id="settingGeminiKey" class="setting-input" placeholder="AIzaSy..." style="width:100%; margin-top:6px; text-align:left;">
+              <span style="font-size:10px; color:var(--text-muted); margin-top:4px;">Get a free key from Google AI Studio to unlock Semantic Search</span>
+            </label>
+          </div>
+          <div class="setting-group">
+            <h3>Help & Data</h3>
+            <div class="setting-row">
+              <button class="btn btn-outline" id="btnHelp" style="width:100%; border-color: var(--accent); color: var(--accent); margin-bottom: 8px;">Restart Tutorial</button>
+            </div>
+            <div class="setting-row">
+              <button class="btn btn-outline" id="btnExport">Export All Data</button>
+              <button class="btn btn-outline" id="btnImport">Import Data</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display:none;">
+          </div>
+          <div class="setting-group upgrade-card" id="upgradeCard">
+            <div class="upgrade-glow"></div>
+            <h3>⚡ Upgrade to Pro</h3>
+            <p>Unlimited sessions, cloud sync, AI grouping, and more.</p>
+            <button class="btn btn-upgrade" id="btnUpgrade">Upgrade — $3.99/mo</button>
+            <div class="license-section" style="margin-top: 12px; display: flex; gap: 8px;">
+              <input type="text" id="licenseInput" class="setting-input" placeholder="Enter keyword..." style="flex:1; text-align: left;">
+              <button class="btn btn-outline" id="btnUnlockPro">Unlock</button>
+            </div>
+          </div>
+          <div class="setting-group upgrade-card" id="proActiveCard" style="display:none; background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(16,185,129,0.05)); border-color: rgba(34,197,94,0.2);">
+            <h3 style="color: var(--green);">💎 Pro Activated</h3>
+            <p style="margin-bottom: 0;">You have unlocked all premium features.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

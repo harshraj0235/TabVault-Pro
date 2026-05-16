@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to TabVault Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --border: #27272a;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --radius: 16px;
+    }
+    body {
+      margin: 0; padding: 0; background-color: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex; justify-content: center; align-items: center; min-height: 100vh;
+      overflow: hidden;
+    }
+    /* Dynamic Background Gradient */
+    .glow {
+      position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(9,9,11,0) 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none;
+    }
+    
+    .container {
+      position: relative; z-index: 1; width: 100%; max-width: 600px; padding: 40px;
+    }
+    
+    .step-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 40px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s ease;
+    }
+    .step-card.active { display: block; opacity: 1; transform: translateY(0); }
+    
+    h1 { margin: 0 0 16px; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+    p { margin: 0 0 32px; font-size: 16px; color: var(--text-muted); line-height: 1.6; }
+    
+    .visual {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; margin-bottom: 32px; font-family: monospace; color: var(--accent);
+      font-size: 18px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .visual.video-style { padding: 0; overflow: hidden; border: none; }
+    .visual img { width: 100%; display: block; }
+    
+    .btn {
+      background: var(--accent); color: white; border: none; padding: 14px 32px;
+      border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
+    
+    .dots { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: 0.3s; }
+    .dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+  
+  <div class="container">
+    <!-- Step 1 -->
+    <div class="step-card active" id="step1">
+      <h1>Welcome to TabVault Pro</h1>
+      <p>The ultimate, crash-proof tab manager for power users. Never lose a session, save 80% of your RAM, and work faster than ever before.</p>
+      <div class="visual" style="font-size: 48px; padding: 40px 0; border:none; background:transparent;">🚀</div>
+      <button class="btn" onclick="nextStep(2)">See what's new</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card" id="step2">
+      <h1>The Command Palette</h1>
+      <p>Click the search bar and type <strong>/</strong> to instantly access power commands like suspending all tabs, finding duplicates, and AI auto-grouping.</p>
+      <div class="visual">
+        <span style="color:var(--text-muted)">Search tabs or type </span><span style="color:white">/suspend</span><span style="animation: blink 1s infinite">|</span>
+      </div>
+      <button class="btn" onclick="nextStep(3)">Next</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card" id="step3">
+      <h1>Kanban Workspaces</h1>
+      <p>You can drag any tab from the list and drop it directly into a Workspace. We'll close the tab to save memory, and save it in the workspace forever.</p>
+      <div class="visual" style="font-size: 48px; padding: 40px 0; border:none; background:transparent;">🖱️ ➔ 📂</div>
+      <button class="btn" onclick="nextStep(4)">Next</button>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-card" id="step4">
+      <h1>Pin it to win it</h1>
+      <p>TabVault Pro is designed to be used as a persistent Side Panel alongside your browsing. Pin the extension to your toolbar so you can open it anytime!</p>
+      <div class="visual" style="font-size: 48px; padding: 40px 0; border:none; background:transparent;">📌</div>
+      <button class="btn" onclick="finish()">Start Browsing</button>
+    </div>
+    
+    <div class="dots">
+      <div class="dot active" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+      <div class="dot" id="dot4"></div>
+    </div>
+  </div>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>
