@@ -100,7 +100,7 @@ async function createTabElement(tab) {
   // Favicon
   let faviconHtml;
   if (tab.favIconUrl && !tab.favIconUrl.startsWith('chrome://')) {
-    faviconHtml = `<img class="tab-favicon" src="${escHtml(tab.favIconUrl)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="tab-favicon-placeholder" style="display:none">${(tab.title || '?')[0].toUpperCase()}</div>`;
+    faviconHtml = `<img class="tab-favicon" src="${escHtml(tab.favIconUrl)}" alt=""><div class="tab-favicon-placeholder" style="display:none">${(tab.title || '?')[0].toUpperCase()}</div>`;
   } else {
     faviconHtml = `<div class="tab-favicon-placeholder">${(tab.title || '?')[0].toUpperCase()}</div>`;
   }
@@ -141,6 +141,15 @@ async function createTabElement(tab) {
       <button class="tab-action-btn tab-action-btn close" data-action="close" title="Close">✕</button>
     </div>
   `;
+
+  // Favicon fallback error handler
+  const faviconImg = el.querySelector('img.tab-favicon');
+  if (faviconImg) {
+    faviconImg.addEventListener('error', () => {
+      faviconImg.style.display = 'none';
+      faviconImg.nextElementSibling.style.display = 'flex';
+    });
+  }
 
   // Click to switch
   el.addEventListener('click', (e) => {
